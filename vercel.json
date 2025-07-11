@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "app/api/*/route.{js,ts}": {
-      "maxDuration": 30
-    }
-  }
-} 
