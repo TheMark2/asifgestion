@@ -147,3 +147,4 @@ Los recibos se generan automáticamente replicando el formato especificado:
 ## 📞 Soporte
 
 Esta es una aplicación de uso personal. Para modificaciones o mejoras, consulta el código fuente y la documentación de las tecnologías utilizadas.
+# Forzar nuevo deploy
