@@ -1,6 +1,6 @@
 {
   "functions": {
-    "app/api/generate-pdf/route.ts": {
+    "app/api/*/route.{js,ts}": {
       "maxDuration": 30
     }
   }
