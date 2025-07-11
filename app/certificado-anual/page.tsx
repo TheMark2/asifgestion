@@ -234,7 +234,7 @@ export default function CertificadoAnualPage() {
               <div className="text-center p-4 border border-gray-200 rounded">
                 <p className="text-sm font-medium text-gray-600 mb-1">Ingresos Brutos</p>
                 <p className="text-xl font-bold text-gray-900">
-                  {formatEuros(certificado.totales.total_ingresos_brutos)}
+                  {formatEuros(certificado.total_ingresos)}
                 </p>
               </div>
               

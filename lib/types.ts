@@ -306,4 +306,25 @@ export interface ReciboAlquilerLegacy {
   updated_at: string
   // Relación
   contratos_alquiler?: ContratoAlquiler
-} 
+}
+
+// Tipo para certificado anual
+export interface CertificadoAnual {
+  propietario: Propietario
+  anio: number
+  total_ingresos: number
+  total_gastos: number
+  total_gestion: number
+  total_iva: number
+  total_neto: number
+  detalles_mensuales: Array<{
+    mes: number
+    anio: number
+    nombre_mes: string
+    ingresos: number
+    gastos: number
+    gestion: number
+    iva: number
+    neto: number
+  }>
+}
