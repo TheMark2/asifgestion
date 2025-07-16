@@ -8,6 +8,19 @@ export async function POST(request: NextRequest) {
   try {
     const { htmlContent, fileName } = await request.json();
 
+    // Función para sanitizar nombres de archivo (solo caracteres ASCII)
+    const sanitizeFileName = (filename: string): string => {
+      return filename
+        .normalize('NFD') // Normalizar caracteres Unicode
+        .replace(/[\u0300-\u036f]/g, '') // Eliminar diacríticos (tildes, acentos)
+        .replace(/[ñÑ]/g, (match) => match === 'ñ' ? 'n' : 'N') // Reemplazar ñ
+        .replace(/[^a-zA-Z0-9.-]/g, '-') // Reemplazar caracteres no ASCII con guiones
+        .replace(/-+/g, '-') // Eliminar guiones dobles
+        .replace(/^-|-$/g, '') // Eliminar guiones al inicio y final
+    }
+
+    const safeFileName = sanitizeFileName(fileName);
+
     // Obtener el logo en base64
     let logoBase64 = '';
     try {
@@ -73,7 +86,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Disposition': `attachment; filename="${safeFileName}"`,
       },
     });
 
