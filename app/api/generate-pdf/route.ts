@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
+import chromium from '@sparticuz/chromium';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -28,10 +29,14 @@ export async function POST(request: NextRequest) {
       .replace(/data:image\/png;base64,[^"]+/g, `data:image/png;base64,${logoBase64}`)
       .replace(/data:image\/svg\+xml;base64,[^"]+/g, `data:image/png;base64,${logoBase64}`);
 
-    // Lanzar Puppeteer
+    // Configuración para Vercel con Chromium
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // Lanzar Puppeteer con Chromium para Vercel
     const browser = await puppeteer.launch({
+      args: isProduction ? chromium.args : ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: isProduction ? await chromium.executablePath() : puppeteer.executablePath(),
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
     const page = await browser.newPage();
@@ -41,15 +46,15 @@ export async function POST(request: NextRequest) {
       waitUntil: 'networkidle0'
     });
 
-    // Generar el PDF
+    // Generar el PDF con márgenes optimizados (1cm como se configuró antes)
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '20px',
-        right: '20px',
-        bottom: '20px',
-        left: '20px'
+        top: '1cm',
+        right: '1cm',
+        bottom: '1cm',
+        left: '1cm'
       },
       displayHeaderFooter: true,
       headerTemplate: '<div></div>',
