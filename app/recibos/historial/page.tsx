@@ -87,6 +87,16 @@ export default function HistorialRecibosPage() {
     }
   })
 
+  // Establecer filtros por defecto al cargar la página
+  useEffect(() => {
+    if (recibos.length > 0) {
+      const mesActual = new Date().getMonth() + 1
+      const anioActual = new Date().getFullYear()
+      setFilterValue('mes', mesActual.toString())
+      setFilterValue('ano', anioActual.toString())
+    }
+  }, [recibos.length])
+
   const filterFields: FilterField[] = [
     {
       key: 'mes',
@@ -383,6 +393,30 @@ export default function HistorialRecibosPage() {
         onFilterChange={setFilterValue}
         onClearFilters={clearFilters}
       />
+
+      {/* Mostrar filtros activos */}
+      {(Object.keys(filterValues).length > 0 || searchValue) && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h3 className="text-sm font-medium text-blue-900 mb-2">Filtros activos:</h3>
+          <div className="flex flex-wrap gap-2">
+            {searchValue && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                Búsqueda: "{searchValue}"
+              </span>
+            )}
+            {Object.entries(filterValues).map(([key, value]) => {
+              if (!value) return null
+              const field = filterFields.find(f => f.key === key)
+              const option = field?.options?.find(o => o.value === value)
+              return (
+                <span key={key} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {field?.label}: {option?.label || value}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <LoadingSpinner text="Cargando recibos..." />

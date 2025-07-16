@@ -16,7 +16,8 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconSettings,
-  IconShield
+  IconShield,
+  IconTable
 } from '@tabler/icons-react'
 
 const navigation = [
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Viviendas', href: '/viviendas', icon: IconBuilding, description: 'Gestionar propiedades' },
   { name: 'Inquilinos', href: '/inquilinos', icon: IconUsers, description: 'Gestionar inquilinos' },
   { name: 'Contratos', href: '/contratos', icon: IconFileText, description: 'Gestionar contratos de alquiler' },
+  { name: 'Liquidaciones y Deudas', href: '/listado-contratos', icon: IconTable, description: 'Gestionar liquidaciones mensuales y ver deudas de inquilinos' },
   { name: 'Generar Recibos', href: '/recibos', icon: IconReceipt, description: 'Crear nuevos recibos' },
   { name: 'Historial Recibos', href: '/recibos/historial', icon: IconHistory, description: 'Consultar recibos anteriores' },
   { name: 'Certificado Anual', href: '/certificado-anual', icon: IconCertificate, description: 'Certificados para declaración de rentas' }

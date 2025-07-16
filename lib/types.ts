@@ -68,6 +68,9 @@ export interface ContratoAlquiler {
   contratos_inquilinos?: ContratoInquilino[] // Múltiples inquilinos
   // Para compatibilidad con código existente
   inquilinos?: Inquilino[] // Array de inquilinos directamente
+  gastos_contrato?: GastoContrato[] // Gastos asociados al contrato
+  liquidaciones_mensuales?: LiquidacionMensual[] // Meses liquidados
+  resumen_deudas?: ResumenDeudas // Resumen calculado de deudas
 }
 
 // Constantes para tipos de gastos
@@ -326,5 +329,78 @@ export interface CertificadoAnual {
     gestion: number
     iva: number
     neto: number
+  }>
+}
+
+// ===================================================================
+// NUEVAS INTERFACES PARA GASTOS Y LIQUIDACIONES POR CONTRATO
+// ===================================================================
+
+// Tabla de gastos por contrato
+export interface GastoContrato {
+  id: string
+  contrato_id: string
+  concepto: string // Reparaciones, Mantenimiento, IBI, Comunidad, Seguro, Gestoría, Otros
+  importe: number
+  fecha: string
+  descripcion?: string
+  created_at: string
+  updated_at: string
+  // Relación
+  contratos_alquiler?: ContratoAlquiler
+}
+
+// Tabla de liquidaciones mensuales
+export interface LiquidacionMensual {
+  id: string
+  contrato_id: string
+  mes: number
+  anio: number
+  importe_liquidado: number
+  fecha_liquidacion: string
+  observaciones?: string
+  created_at: string
+  updated_at: string
+  // Relación
+  contratos_alquiler?: ContratoAlquiler
+}
+
+// Resumen de deudas calculado
+export interface ResumenDeudas {
+  total_deuda: number
+  meses_pendientes: number
+  primer_mes_pendiente?: string
+  meses_atrasado: number
+  detalle_meses: Array<{
+    mes: number
+    anio: number
+    nombre_mes: string
+    importe_debido: number
+    meses_atrasado: number
+  }>
+}
+
+// Formulario para crear/editar gastos
+export interface GastoContratoForm {
+  concepto: string
+  importe: string
+  fecha: string
+  descripcion: string
+}
+
+// Resumen de gastos por contrato
+export interface ResumenGastosContrato {
+  contrato_id: string
+  total_gastos: number
+  numero_gastos: number
+  gastos_por_anio: Array<{
+    anio: number
+    total: number
+    numero: number
+  }>
+  gastos_por_concepto: Array<{
+    concepto: string
+    total: number
+    numero: number
   }>
 }

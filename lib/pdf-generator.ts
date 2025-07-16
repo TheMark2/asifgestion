@@ -42,43 +42,49 @@ export interface ReciboData {
   totalConGastos: number;
 }
 
-// Interfaz para mantener compatibilidad con código existente
+// Interfaz actualizada para soportar múltiples contratos
 export interface ReciboPreview {
   numero_recibo: string;
   fecha_emision: Date;
-  contrato_id: string;
-  meses_seleccionados: Array<{
-    mes: number;
-    anio: number;
-    nombre_mes: string;
-    es_atrasado: boolean;
-  }>;
-  contrato: {
-    id: string;
-    importe_alquiler_mensual: number;
-    viviendas: {
+  contratos: Array<{
+    contrato: {
       id: string;
-      direccion_completa: string;
-      propietarios: {
+      importe_alquiler_mensual: number;
+      viviendas: {
+        id: string;
+        direccion_completa: string;
+        propietarios: {
+          nombre_completo: string;
+          dni_cif: string;
+          telefono?: string;
+          email?: string;
+          porcentaje_gestion: number;
+        };
+      };
+      inquilinos: Array<{
+        id: string;
         nombre_completo: string;
-        dni_cif: string;
+        dni: string;
         telefono?: string;
         email?: string;
-        porcentaje_gestion: number;
-      };
+      }>;
     };
-    inquilinos: Array<{
-      id: string;
-      nombre_completo: string;
-      dni: string;
-      telefono?: string;
-      email?: string;
+    meses_seleccionados: Array<{
+      mes: number;
+      anio: number;
+      nombre_mes: string;
+      es_atrasado: boolean;
     }>;
-  };
-  gastos_adicionales?: Array<{
-    concepto: string;
-    importe: number;
+    gastos_adicionales?: Array<{
+      concepto?: string;
+      tipo_gasto?: string;
+      importe: number;
+    }>;
   }>;
+  propietario: {
+    nombre_completo: string;
+    dni_cif: string;
+  };
   totales: {
     importe_total_bruto: number;
     importe_total_neto: number;
@@ -146,68 +152,59 @@ function generarHTMLRecibo(data: ReciboData): string {
         .container {
           max-width: 210mm;
           margin: 0 auto;
-          padding: 20px;
+          padding: 10px;
           page-break-inside: avoid;
         }
         
         .header {
           text-align: center;
-          margin-bottom: 30px;
+          margin-bottom: 15px;
           border-bottom: 2px solid #333;
-          padding-bottom: 15px;
+          padding-bottom: 10px;
           page-break-inside: avoid;
         }
         
-        .logo {
-          margin-bottom: 15px;
-        }
-        
-        .logo img {
-          height: 40px;
-          width: auto;
-        }
-        
         .header h1 {
-          font-size: 24px;
+          font-size: 20px;
           font-weight: bold;
-          margin-bottom: 5px;
+          margin-bottom: 3px;
           color: #333;
         }
         
         .header .numero {
-          font-size: 14px;
+          font-size: 12px;
           color: #666;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
         }
         
         .info-section {
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           page-break-inside: avoid;
         }
         
         .info-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 30px;
-          margin-bottom: 20px;
+          gap: 15px;
+          margin-bottom: 10px;
           page-break-inside: avoid;
         }
         
         .info-box {
           border: 1px solid #ddd;
-          padding: 15px;
+          padding: 8px;
           border-radius: 4px;
           background: #f9f9f9;
           page-break-inside: avoid;
         }
         
         .info-box h3 {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: bold;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
           color: #333;
           border-bottom: 1px solid #ddd;
-          padding-bottom: 5px;
+          padding-bottom: 3px;
         }
         
         .info-row {
@@ -226,36 +223,36 @@ function generarHTMLRecibo(data: ReciboData): string {
         }
         
         .recibido-section {
-          margin-bottom: 20px;
-          padding: 15px;
+          margin-bottom: 10px;
+          padding: 8px;
           background: #f8f9fa;
           border-left: 4px solid #333;
           page-break-inside: avoid;
         }
         
         .recibido-text {
-          font-size: 11px;
-          line-height: 1.5;
+          font-size: 10px;
+          line-height: 1.3;
           color: #555;
-          margin-bottom: 15px;
+          margin-bottom: 8px;
         }
         
         .detalles-section {
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           page-break-inside: avoid;
         }
         
         .detalles-table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 15px;
+          margin-bottom: 8px;
           page-break-inside: avoid;
         }
         
         .detalles-table th,
         .detalles-table td {
           border: 1px solid #ddd;
-          padding: 10px;
+          padding: 6px;
           text-align: left;
         }
         
@@ -270,21 +267,21 @@ function generarHTMLRecibo(data: ReciboData): string {
         }
         
         .gastos-section {
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           page-break-inside: avoid;
         }
         
         .gastos-table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 15px;
+          margin-bottom: 8px;
           page-break-inside: avoid;
         }
         
         .gastos-table th,
         .gastos-table td {
           border: 1px solid #ddd;
-          padding: 8px;
+          padding: 5px;
           text-align: left;
         }
         
@@ -300,32 +297,32 @@ function generarHTMLRecibo(data: ReciboData): string {
         
         .total-section {
           border: 2px solid #333;
-          padding: 15px;
+          padding: 10px;
           background: #f8f9fa;
           text-align: center;
-          margin-bottom: 30px;
+          margin-bottom: 15px;
           page-break-inside: avoid;
         }
         
         .total-section h3 {
-          font-size: 18px;
-          margin-bottom: 10px;
+          font-size: 16px;
+          margin-bottom: 8px;
           color: #333;
         }
         
         .total-amount {
-          font-size: 24px;
+          font-size: 20px;
           font-weight: bold;
           color: #333;
         }
         
         .footer {
-          margin-top: 40px;
+          margin-top: 20px;
           text-align: center;
-          font-size: 11px;
+          font-size: 10px;
           color: #666;
           border-top: 1px solid #ddd;
-          padding-top: 15px;
+          padding-top: 10px;
           page-break-inside: avoid;
         }
         
@@ -379,7 +376,7 @@ function generarHTMLRecibo(data: ReciboData): string {
         }
         
         @page {
-          margin: 2cm;
+          margin: 1cm;
           @bottom-center {
             content: "Página " counter(page) " de " counter(pages);
             font-size: 10px;
@@ -391,9 +388,6 @@ function generarHTMLRecibo(data: ReciboData): string {
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">
-            <img src="data:image/png;base64,${getLogoBase64Sync()}" alt="Logo" />
-          </div>
           <h1>RECIBO DE ALQUILER</h1>
           <div class="numero">Número: ${data.numeroRecibo}</div>
           <div>Fecha: ${fechaActual}</div>
@@ -525,20 +519,22 @@ function generarHTMLRecibo(data: ReciboData): string {
 
 // Función para convertir ReciboPreview a ReciboData
 function convertirPreviewAData(preview: ReciboPreview): ReciboData {
-  const primerMes = preview.meses_seleccionados[0];
+  // Usar el primer contrato para los datos principales
+  const primerContrato = preview.contratos[0];
+  const primerMes = primerContrato.meses_seleccionados[0];
   const mesNombre = primerMes.nombre_mes.toLowerCase();
   
   return {
     contrato: {
-      id: preview.contrato.id,
-      vivienda_id: preview.contrato.viviendas.id,
+      id: primerContrato.contrato.id,
+      vivienda_id: primerContrato.contrato.viviendas.id,
       fecha_inicio_contrato: '',
-      importe_alquiler_mensual: preview.contrato.importe_alquiler_mensual,
+      importe_alquiler_mensual: primerContrato.contrato.importe_alquiler_mensual,
       activo: true,
       created_at: '',
       updated_at: ''
     },
-    inquilinos: preview.contrato.inquilinos.map((inquilino: any) => ({
+    inquilinos: primerContrato.contrato.inquilinos.map((inquilino: any) => ({
       id: inquilino.id,
       nombre_completo: inquilino.nombre_completo,
       dni: inquilino.dni,
@@ -549,28 +545,30 @@ function convertirPreviewAData(preview: ReciboPreview): ReciboData {
     })),
     propietario: {
       id: '',
-      nombre_completo: preview.contrato.viviendas.propietarios.nombre_completo,
-      dni_cif: preview.contrato.viviendas.propietarios.dni_cif,
-      telefono: preview.contrato.viviendas.propietarios.telefono,
-      email: preview.contrato.viviendas.propietarios.email,
-      porcentaje_gestion: preview.contrato.viviendas.propietarios.porcentaje_gestion,
+      nombre_completo: preview.propietario.nombre_completo,
+      dni_cif: preview.propietario.dni_cif,
+      telefono: '',
+      email: '',
+      porcentaje_gestion: primerContrato.contrato.viviendas.propietarios.porcentaje_gestion,
       created_at: '',
       updated_at: ''
     },
     vivienda: {
-      id: preview.contrato.viviendas.id,
+      id: primerContrato.contrato.viviendas.id,
       propietario_id: '',
-      direccion_completa: preview.contrato.viviendas.direccion_completa,
+      direccion_completa: primerContrato.contrato.viviendas.direccion_completa,
       created_at: '',
       updated_at: ''
     },
     mes: mesNombre,
     año: primerMes.anio,
     numeroRecibo: preview.numero_recibo,
-    gastos: preview.gastos_adicionales?.map((g: any) => ({
-      concepto: g.concepto || g.tipo_gasto || 'Gasto',
-      importe: g.importe
-    })) || [],
+    gastos: preview.contratos.flatMap((contratoConPeriodo: any) => 
+      (contratoConPeriodo.gastos_adicionales || []).map((g: any) => ({
+        concepto: g.concepto || g.tipo_gasto || 'Gasto',
+        importe: g.importe
+      }))
+    ),
     totalGastos: preview.totales_con_gastos?.total_gastos_adicionales || 0,
     totalConGastos: preview.totales_con_gastos?.importe_neto_final || preview.totales.importe_total_neto
   };
